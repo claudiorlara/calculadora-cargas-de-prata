@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Cargas de Prata</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: #0f0f1a;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 48px;
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .icon svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .formula-box {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 16px 20px;
+            margin-bottom: 32px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .formula-box svg {
+            width: 20px;
+            height: 20px;
+            fill: #6366f1;
+            flex-shrink: 0;
+        }
+
+        .formula-box p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            margin-bottom: 10px;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper svg {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            fill: rgba(255, 255, 255, 0.3);
+            transition: fill 0.3s;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px 16px 16px 48px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            font-size: 15px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        .form-group input:focus + svg,
+        .form-group input:focus ~ svg {
+            fill: #6366f1;
+        }
+
+        .input-wrapper:focus-within svg {
+            fill: #6366f1;
+        }
+
+        .btn-calcular {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+            letter-spacing: 0.3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-calcular::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-calcular:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-calcular:hover::before {
+            left: 100%;
+        }
+
+        .btn-calcular:active {
+            transform: translateY(0);
+        }
+
+        .resultado {
+            margin-top: 32px;
+            padding: 28px;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.15) 100%);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 20px;
+            text-align: center;
+            display: none;
+            animation: slideUp 0.5s ease;
+        }
+
+        .resultado.show {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .resultado-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .resultado-valor {
+            color: #22c55e;
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .resultado-unidade {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .footer {
+            margin-top: 32px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 32px 24px;
+                border-radius: 24px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .resultado-valor {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <h1>Cargas de Prata</h1>
+            <p>Calculadora de Tempo de Banho</p>
+        </div>
+
+        <div class="formula-box">
+            <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <p>(Qtd × Área × μ ÷ 1005 × 60) ÷ Cargas</p>
+        </div>
+
+        <div class="form-group">
+            <label for="quantidade">Quantidade de Peças</label>
+            <div class="input-wrapper">
+                <input type="text" inputmode="decimal" id="quantidade" placeholder="0 (ex: 5+3+2)" onkeydown="moverProximo(event, 'area')" onblur="somarQuantidade()">
+                <svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="area">Área da Peça (cm²)</label>
+            <div class="input-wrapper">
+                <input type="number" id="area" placeholder="0" step="0.01" onkeydown="moverProximo(event, 'micragem')">
+                <svg viewBox="0 0 24 24"><path d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z"/></svg>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="micragem">Micragem da Prata (μ)</label>
+            <div class="input-wrapper">
+                <input type="number" id="micragem" placeholder="0" step="0.01" onkeydown="moverProximo(event, 'cargas')">
+                <svg viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="cargas">Quantidade de Cargas</label>
+            <div class="input-wrapper">
+                <input type="number" id="cargas" placeholder="0" min="1" onkeydown="moverProximo(event, 'calcular')">
+                <svg viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            </div>
+        </div>
+
+        <button class="btn-calcular" onclick="calcular()">CALCULAR TEMPO</button>
+
+        <div class="resultado" id="resultado">
+            <div class="resultado-label">Tempo de Banho</div>
+            <div class="resultado-valor" id="valorResultado">0</div>
+            <div class="resultado-unidade">segundos</div>
+        </div>
+
+        <div class="footer">Cálculo para banho de prata</div>
+    </div>
+
+    <script>
+        function somarQuantidade() {
+            const input = document.getElementById('quantidade');
+            const valor = input.value;
+
+            if (valor.includes('+')) {
+                const soma = valor
+                    .split('+')
+                    .map(v => parseFloat(v.trim().replace(',', '.')))
+                    .filter(n => !isNaN(n))
+                    .reduce((a, b) => a + b, 0);
+
+                input.value = soma;
+            }
+        }
+
+        function moverProximo(event, proximoId) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+
+                if (event.target.id === 'quantidade') {
+                    somarQuantidade();
+                }
+
+                if (proximoId === 'calcular') {
+                    calcular();
+                } else {
+                    document.getElementById(proximoId).focus();
+                }
+            }
+        }
+
+        function calcular() {
+            somarQuantidade();
+
+            const quantidade = parseFloat(document.getElementById('quantidade').value);
+            const area = parseFloat(document.getElementById('area').value);
+            const micragem = parseFloat(document.getElementById('micragem').value);
+            const cargas = parseFloat(document.getElementById('cargas').value);
+
+            if (isNaN(quantidade) || isNaN(area) || isNaN(micragem) || isNaN(cargas)) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            if (cargas <= 0) {
+                alert('A quantidade de cargas deve ser maior que zero.');
+                return;
+            }
+
+            const resultado = (quantidade * area * micragem / 1005 * 60) / cargas;
+
+            document.getElementById('valorResultado').textContent = resultado.toFixed(2);
+            document.getElementById('resultado').classList.add('show');
+        }
+    </script>
+</body>
+</html>
